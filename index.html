@@ -1,0 +1,379 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shopnix Onboarding Wizard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+  <style>
+    .theme-card {
+      cursor: pointer;
+      border: 2px solid transparent;
+      padding: 15px;
+      border-radius: 12px;
+      transition: all 0.3s ease;
+      text-align: center;
+      background: #fff;
+      height: 280px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+    }
+    .theme-card:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    }
+    .theme-card img {
+      height: 160px;
+      object-fit: cover;
+      width: 100%;
+      border-radius: 8px;
+    }
+    .theme-card.selected {
+      border-color: #0d6efd;
+      box-shadow: 0 0 16px rgba(13, 110, 253, 0.3);
+      background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%);
+    }
+    .theme-orange { background: linear-gradient(135deg, #ff6b35, #f7931e); }
+    .theme-turquoise { background: linear-gradient(135deg, #40e0d0, #48d1cc); }
+    .theme-blue { background: linear-gradient(135deg, #4285f4, #1976d2); }
+    
+    .pricing-scroll {
+      max-height: 400px;
+      overflow-y: auto;
+      padding-right: 8px;
+    }
+    .pricing-scroll::-webkit-scrollbar {
+      width: 6px;
+    }
+    .pricing-scroll::-webkit-scrollbar-track {
+      background: #f1f1f1;
+      border-radius: 3px;
+    }
+    .pricing-scroll::-webkit-scrollbar-thumb {
+      background: #c1c1c1;
+      border-radius: 3px;
+    }
+    .pricing-item {
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid transparent !important;
+    }
+    .pricing-item:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(0,0,0,0.1) !important;
+    }
+    .pricing-item.selected {
+      border-color: #0d6efd !important;
+      background: linear-gradient(145deg, #f8f9ff 0%, #ffffff 100%) !important;
+    }
+    .wizard-step {
+      min-height: 300px;
+    }
+  </style>
+</head>
+<body class="bg-light">
+  <div class="container py-5">
+    <div class="card shadow-sm mx-auto" style="max-width:900px;">
+      <div class="card-body">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+          <h5 class="mb-0">Shopnix — Onboarding Wizard</h5>
+          <div class="text-end small text-muted">Step <span id="stepNum">1</span> of 3</div>
+        </div>
+        <div class="progress mb-4" style="height:8px;">
+          <div id="progressBar" class="progress-bar bg-primary" role="progressbar" style="width:33%"></div>
+        </div>
+
+        <!-- STEP 1 -->
+        <div id="step1" class="wizard-step">
+          <h6 class="fw-semibold">Choose a theme</h6>
+          <p class="text-muted">Select the primary color theme for your shop.</p>
+          <div class="row gy-4">
+            <div class="col-12 col-md-4">
+              <div class="theme-card" data-theme="orange" tabindex="0">
+                <div class="theme-orange mb-3 rounded shadow-sm" style="height: 160px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: white; font-size: 24px; font-weight: bold;">Orange</span>
+                </div>
+                <div class="fw-medium">Orange</div>
+                <small class="text-muted">Warm and energetic</small>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="theme-card" data-theme="turquoise" tabindex="0">
+                <div class="theme-turquoise mb-3 rounded shadow-sm" style="height: 160px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: white; font-size: 24px; font-weight: bold;">Turquoise</span>
+                </div>
+                <div class="fw-medium">Turquoise</div>
+                <small class="text-muted">Fresh and calm</small>
+              </div>
+            </div>
+            <div class="col-12 col-md-4">
+              <div class="theme-card" data-theme="blue" tabindex="0">
+                <div class="theme-blue mb-3 rounded shadow-sm" style="height: 160px; width: 100%; display: flex; align-items: center; justify-content: center;">
+                  <span style="color: white; font-size: 24px; font-weight: bold;">Blue</span>
+                </div>
+                <div class="fw-medium">Blue</div>
+                <small class="text-muted">Professional and trusted</small>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- STEP 2 -->
+        <div id="step2" class="wizard-step d-none">
+          <h6 class="fw-semibold">Add product type & category</h6>
+          <p class="text-muted">Select product type and category for your store.</p>
+          <form id="productForm">
+            <div class="row g-3">
+              <div class="col-12 col-md-6">
+                <label class="form-label">Product Type</label>
+                <select id="productType" class="form-select">
+                  <option value="">Select type</option>
+                  <option value="clothing">Clothing</option>
+                  <option value="electronics">Electronics</option>
+                  <option value="home">Home & Living</option>
+                  <option value="beauty">Beauty</option>
+                </select>
+              </div>
+              <div class="col-12 col-md-6">
+                <label class="form-label">Category</label>
+                <select id="category" class="form-select">
+                  <option value="">Select category</option>
+                </select>
+              </div>
+              <div class="col-12">
+                <label class="form-label">Describe your products (optional)</label>
+                <textarea id="productDescription" class="form-control" rows="3" placeholder="Short description about your products..."></textarea>
+              </div>
+            </div>
+          </form>
+        </div>
+
+        <!-- STEP 3 -->
+        <div id="step3" class="wizard-step d-none">
+          <h6 class="fw-semibold">Pricing & Plans</h6>
+          <p class="text-muted">Choose a pricing plan that fits your business. Click to select.</p>
+          <div class="pricing-scroll">
+            <div class="pricing-item p-3 mb-3 bg-white rounded shadow-sm" data-plan="starter">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Starter</div>
+                  <small class="text-muted">For small stores</small>
+                </div>
+                <div class="fs-4 fw-semibold">₹499/mo</div>
+              </div>
+              <ul class="mt-2 mb-0 list-unstyled">
+                <li>✓ Up to 100 products</li>
+                <li>✓ Basic analytics</li>
+                <li>✓ Email support</li>
+              </ul>
+            </div>
+            <div class="pricing-item p-3 mb-3 bg-white rounded shadow-sm" data-plan="growth">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Growth</div>
+                  <small class="text-muted">For growing businesses</small>
+                </div>
+                <div class="fs-4 fw-semibold">₹1,499/mo</div>
+              </div>
+              <ul class="mt-2 mb-0 list-unstyled">
+                <li>✓ Up to 1,000 products</li>
+                <li>✓ Advanced analytics</li>
+                <li>✓ Priority support</li>
+              </ul>
+            </div>
+            <div class="pricing-item p-3 mb-3 bg-white rounded shadow-sm" data-plan="scale">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Scale</div>
+                  <small class="text-muted">For large catalogs</small>
+                </div>
+                <div class="fs-4 fw-semibold">₹4,999/mo</div>
+              </div>
+              <ul class="mt-2 mb-0 list-unstyled">
+                <li>✓ Unlimited products</li>
+                <li>✓ Custom integrations</li>
+                <li>✓ Dedicated account manager</li>
+              </ul>
+            </div>
+            <div class="pricing-item p-3 mb-3 bg-white rounded shadow-sm" data-plan="enterprise">
+              <div class="d-flex justify-content-between align-items-center">
+                <div>
+                  <div class="fw-bold">Enterprise</div>
+                  <small class="text-muted">Custom solutions</small>
+                </div>
+                <div class="fs-4 fw-semibold">Contact Us</div>
+              </div>
+              <ul class="mt-2 mb-0 list-unstyled">
+                <li>✓ Custom pricing</li>
+                <li>✓ Priority integrations</li>
+                <li>✓ 24/7 support</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- NAV BUTTONS -->
+        <div class="d-flex justify-content-between mt-4">
+          <button id="prevBtn" class="btn btn-outline-secondary" disabled>Back</button>
+          <div>
+            <button id="saveDraft" class="btn btn-light me-2 d-none">Save Draft</button>
+            <button id="nextBtn" class="btn btn-primary">Next</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+  <script>
+    let currentStep = 1;
+    let selectedData = {
+      theme: null,
+      productType: null,
+      category: null,
+      description: '',
+      plan: null
+    };
+
+    // Category options based on product type
+    const categories = {
+      clothing: ['T-Shirts', 'Jeans', 'Dresses', 'Shoes', 'Accessories'],
+      electronics: ['Smartphones', 'Laptops', 'Headphones', 'Cameras', 'Gaming'],
+      home: ['Furniture', 'Decor', 'Kitchen', 'Bedding', 'Storage'],
+      beauty: ['Skincare', 'Makeup', 'Haircare', 'Fragrances', 'Tools']
+    };
+
+    // Theme selection
+    $(".theme-card").click(function() {
+      $(".theme-card").removeClass("selected");
+      $(this).addClass("selected");
+      selectedData.theme = $(this).data('theme');
+      updateNextButton();
+    });
+
+    // Product type change handler
+    $('#productType').change(function() {
+      const type = $(this).val();
+      selectedData.productType = type;
+      
+      const categorySelect = $('#category');
+      categorySelect.empty().append('<option value="">Select category</option>');
+      
+      if (type && categories[type]) {
+        categories[type].forEach(cat => {
+          categorySelect.append(`<option value="${cat}">${cat}</option>`);
+        });
+      }
+      updateNextButton();
+    });
+
+    // Category change handler
+    $('#category').change(function() {
+      selectedData.category = $(this).val();
+      updateNextButton();
+    });
+
+    // Description change handler
+    $('#productDescription').on('input', function() {
+      selectedData.description = $(this).val();
+    });
+
+    // Pricing plan selection
+    $('.pricing-item').click(function() {
+      $('.pricing-item').removeClass('selected');
+      $(this).addClass('selected');
+      selectedData.plan = $(this).data('plan');
+      updateNextButton();
+    });
+
+    // Navigation buttons
+    $('#nextBtn').click(function() {
+      if (currentStep < 3) {
+        currentStep++;
+        updateWizard();
+      } else {
+        // Final submission
+        handleComplete();
+      }
+    });
+
+    $('#prevBtn').click(function() {
+      if (currentStep > 1) {
+        currentStep--;
+        updateWizard();
+      }
+    });
+
+    $('#saveDraft').click(function() {
+      alert('Draft saved successfully!');
+    });
+
+    function updateWizard() {
+      // Update step indicator
+      $('#stepNum').text(currentStep);
+      
+      // Update progress bar
+      const progressPercentage = (currentStep / 3) * 100;
+      $('#progressBar').css('width', progressPercentage + '%');
+      
+      // Show/hide steps
+      $('.wizard-step').addClass('d-none');
+      $(`#step${currentStep}`).removeClass('d-none');
+      
+      // Update buttons
+      $('#prevBtn').prop('disabled', currentStep === 1);
+      
+      if (currentStep === 3) {
+        $('#nextBtn').text('Complete Setup');
+        $('#saveDraft').removeClass('d-none');
+      } else {
+        $('#nextBtn').text('Next');
+        $('#saveDraft').addClass('d-none');
+      }
+      
+      updateNextButton();
+    }
+
+    function updateNextButton() {
+      let canProceed = false;
+      
+      switch(currentStep) {
+        case 1:
+          canProceed = selectedData.theme !== null;
+          break;
+        case 2:
+          canProceed = selectedData.productType && selectedData.category;
+          break;
+        case 3:
+          canProceed = selectedData.plan !== null;
+          break;
+      }
+      
+      $('#nextBtn').prop('disabled', !canProceed);
+    }
+
+    function handleComplete() {
+      // Create summary of selections
+      const summary = `
+        <div class="alert alert-success">
+          <h5>Setup Complete!</h5>
+          <p><strong>Theme:</strong> ${selectedData.theme}</p>
+          <p><strong>Product Type:</strong> ${selectedData.productType}</p>
+          <p><strong>Category:</strong> ${selectedData.category}</p>
+          <p><strong>Plan:</strong> ${selectedData.plan}</p>
+          ${selectedData.description ? `<p><strong>Description:</strong> ${selectedData.description}</p>` : ''}
+        </div>
+      `;
+      
+      $('.wizard-step').html(summary);
+      $('#nextBtn, #prevBtn, #saveDraft').prop('disabled', true);
+      $('#nextBtn').text('Completed');
+    }
+
+    // Initialize
+    updateNextButton();
+  </script>
+</body>
+</html>
